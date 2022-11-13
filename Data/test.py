@@ -75,3 +75,5 @@ prb_fd_mu = fd_mu/(fd_mu+fd_md)*100
 # prb_mp = mu/(mu+md)*100
 # print('월요일에 주식이 오를 확률은 {}%입니다'.format(prb_mp))
 print('금요일에 1.8%이상 상승했다면, 월요일에 오를 확률은 {}%입니다'.format(prb_fd_mu))
+
+print("hi~")
