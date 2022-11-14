@@ -1,30 +1,26 @@
 from datetime import date, datetime
-from lib import day_of_week_analysis
+import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import yfinance as yf
+from lib import mf, set_up
 from pandas import DataFrame, Series
-from lib import set_up
+
 plt.style.use('seaborn-v0_8')
 
-# today = datetime.now().date().strftime("%Y-%m-%d")
 
-#종목의 티커를 설정하는 부분입니다.
-# nasdaq = yf.Ticker('^ixic')
+df = set_up.set_stock_df('nasdaq', '^ixic', '2010-01-01') # format ('name', 'ticker', 2020-01-01)
+#day_of_week_analysis.effect_day_of_week_rise(df, 'Friday', 3, 'down') # format (df, 'day of week', 'int', 'up or down')
+#day_of_week_analysis.day_of_week_rise(df, 'Friday')
+# mf.up_leads_up(df, 4)
+# mf.down_leads_down(df, -4)
+# data = []
+# for i in list(np.arange(-10, 0, 0.1)):
+#     data.append(mf.down_leads_down(df, i))
 
-# ##종목 조회 기간 설정
-# df = nasdaq.history(start="2007-01-01", end=today)
-
-# stock_date = df.index
-# price = df['Close']
-
-
-# yesterday_price = df['Close'].shift()
-# poc = (price-yesterday_price)/yesterday_price*100
-# df['percentage_change'] = poc
-# df['day'] = df.index
-# df['day_name'] = df['day'].dt.day_name()
-
-#start date should be in form of 2007-01-01
-df = set_up.set_stock_df('nasdaq', '^ixic', '2010-01-01')
-day_of_week_analysis.check_day_of_week_rise(df, 'Friday', 0, 'up')
+# plt.figure()
+# plt.plot(list(np.arange(-10, 0, 0.1)), data)
+# plt.ylabel('probability')
+# plt.xlabel('% Drop')
+# plt.show()
+mf.plot_effect_of_day_before(df, -8, 8, 0.1)

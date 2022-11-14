@@ -3,3 +3,4 @@ Nasdaq = ^ixic
 Dow&Jones = ^dji
 S&P 500 ^gspc
 SOX = ^sox
+Treasury Yield 10 Years (^TNX)
