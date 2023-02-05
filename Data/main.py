@@ -1,10 +1,10 @@
 from datetime import date, datetime
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
 import yfinance as yf
 from lib import mf, set_up
 from pandas import DataFrame, Series
+import pandas as pd
 
 plt.style.use('seaborn-v0_8')
 
@@ -21,4 +21,6 @@ df_Y = set_up.set_stock_df('10Y', '^TNX', '2010-01-01')
 #print(mf.effect_of_vix_next_day(df, '2010-01-01'))
 #print(mf.effect_of_10Y_next_day(df, '2010-01-01'))
 
-print(mf.effect_of_10Y_next_day(df, 'percentage_change', '2010-01-01'))
+#print(mf.effect_of_10Y_next_day(df, 'percentage_change', '2010-01-01'))
+#print(df)
+print(mf.moving_average(df, 2, 10))

@@ -151,3 +151,10 @@ def effect_of_10Y_next_day(df_stock, factor, start_date):
                 
     probability = days_up/(days_up + days_down)*100
     return probability
+
+
+#이동평균선 구하기
+def moving_average(df_stock, long_term, short_term):
+    long_term_mean = df_stock['Close'].rolling(long_term)
+    short_term_mean = df_stock['Close'].rolling(short_term)
+    return long_term_mean.mean(), short_term_mean.mean()
