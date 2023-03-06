@@ -17,4 +17,5 @@ def set_stock_df(stock, ticker, start_date):
     df['percentage_change'] = poc
     df['date'] = df.index
     df['day_name'] = df['date'].dt.day_name()
+    df.reset_index(drop=False, inplace=True)
     return df
