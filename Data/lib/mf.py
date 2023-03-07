@@ -265,50 +265,75 @@ def test_turtle_strategy(df, df_turtle, initial_capital):
         #롱 진입
         if df.iloc[i]['High']>df_turtle.iloc[i-1]['Long Term High'] and Long_condition == 0 and Short_condition == 0:
             Long_condition = 1
-            add_df = pd.DataFrame({'Date':[df.iloc[i]['Date']], 'Position':['Long'], 'Buying Price':[df_turtle.iloc[i-1]['Long Term High']], 'Selling Price':[0]})
+            add_df = pd.DataFrame({'Date':[df.iloc[i]['Date']], 'Position':['Long'], 'Buying Price':[df_turtle.iloc[i-1]['Long Term High']], 'Selling Price':[0], 'Stop Loss':[df_turtle.iloc[i-1]['Short Term Low']]})
             df_list_of_trade = df_list_of_trade.append(add_df, ignore_index = True)
             continue
 
         #롱 정리 혹은 손절
         if df.iloc[i]['Low']<df_turtle.iloc[i-1]['Short Term Low'] and Long_condition == 1 and Short_condition == 0:
             Long_condition = 0
-            add_df = pd.DataFrame({'Date':[df.iloc[i]['Date']], 'Position':['Sell'], 'Buying Price':[0], 'Selling Price':[df_turtle.iloc[i-1]['Short Term Low']]})
+            add_df = pd.DataFrame({'Date':[df.iloc[i]['Date']], 'Position':['Sell'], 'Buying Price':[0], 'Selling Price':[df_turtle.iloc[i-1]['Short Term Low']], 'Stop Loss':[0]})
             df_list_of_trade = df_list_of_trade.append(add_df, ignore_index = True)
             continue
         
         #숏 진입
         if df.iloc[i]['Low']<df_turtle.iloc[i-1]['Long Term Low'] and Short_condition == 0 and Long_condition == 0:
             Short_condition = 1
-            add_df = pd.DataFrame({'Date':[df.iloc[i]['Date']], 'Position':['Short'], 'Buying Price':[0], 'Selling Price':[df_turtle.iloc[i-1]['Long Term Low']]})
+            add_df = pd.DataFrame({'Date':[df.iloc[i]['Date']], 'Position':['Short'], 'Buying Price':[0], 'Selling Price':[df_turtle.iloc[i-1]['Long Term Low']], 'Stop Loss':[df_turtle.iloc[i-1]['Short Term High']]})
             df_list_of_trade = df_list_of_trade.append(add_df, ignore_index = True)
             continue
         #숏 정리 혹은 손절
         if df.iloc[i]['High']>df_turtle.iloc[i-1]['Short Term High'] and Short_condition ==1 and Long_condition == 0:
             Short_condition = 0
-            add_df = pd.DataFrame({'Date':[df.iloc[i]['Date']], 'Position':['Buy'], 'Buying Price':[df_turtle.iloc[i-1]['Short Term High']], 'Selling Price':[0]})
+            add_df = pd.DataFrame({'Date':[df.iloc[i]['Date']], 'Position':['Buy'], 'Buying Price':[df_turtle.iloc[i-1]['Short Term High']], 'Selling Price':[0], 'Stop Loss':[0]})
             df_list_of_trade = df_list_of_trade.append(add_df, ignore_index = True)
             continue
     
     capital = initial_capital
+    position_size = 0
     list_capital= []
     i = 1
+    trial = 20
+    df_list_of_trade['Capital'] = [{range(len(df_list_of_trade))}]
     while i < len(df_list_of_trade):
         if df_list_of_trade.iloc[i]['Position']=='Sell':
             list_capital.append(capital)
             percentage_change = (df_list_of_trade.iloc[i]['Selling Price']-df_list_of_trade.iloc[i-1]['Buying Price'])/df_list_of_trade.iloc[i-1]['Buying Price']
-            capital = capital*(1+percentage_change)
+            #자금관리전략을 적용하려면
+            #------------------------------------------------
+            position_size = (df_list_of_trade.iloc[i-1]['Capital']/trial)/((df_list_of_trade.iloc[i-1]['Buying Price']-df_list_of_trade.iloc[i-1]['Stop Loss'])/df_list_of_trade.iloc[i-1]['Buying Price'])
+            capital = capital + position_size*percentage_change
+            #------------------------------------------------
+            #자금관리전략을 적용하지 않으려면
+            #capital = capital*(1+percentage_change)
+            add_df = pd.DataFrame({'Capital':[capital]})
+
+            df_list_of_trade.iloc[i]['Capital'] = capital
+            df_list_of_trade.iloc[i+1]['Capital'] = capital
+            df_list_of_trade = df_list_of_trade.append(add_df, ignore_index = True)
+
             list_capital.append(capital)
             i = i +2
         elif df_list_of_trade.iloc[i]['Position']=='Buy':
             list_capital.append(capital)
             percentage_change = (df_list_of_trade.iloc[i-1]['Selling Price'] - df_list_of_trade.iloc[i]['Buying Price'])/df_list_of_trade.iloc[i-1]['Selling Price']
-            capital = capital*(1+percentage_change)
+            #자금관리전략을 적용하려면
+            #------------------------------------------------
+            position_size = (df_list_of_trade.iloc[i-1]['Capital']/trial)/((df_list_of_trade.iloc[i-1]['Stop Loss']-df_list_of_trade.iloc[i-1]['Selling Price'])/df_list_of_trade.iloc[i-1]['Selling Price'])
+            capital = capital + position_size*percentage_change
+            #------------------------------------------------
+            #자금관리전략을 적용하지 않으려면
+            #capital = capital*(1+percentage_change)
+            df_list_of_trade.iloc[i]['Capital'] = capital
+            df_list_of_trade.iloc[i+1]['Capital'] = capital
+
             list_capital.append(capital)
             i = i + 2
         if i ==len(df_list_of_trade):
             list_capital.append(capital)
             break
-    df_list_of_trade['Capital'] = list_capital
+    #df_list_of_trade['Capital'] = list_capital
     
     return df_list_of_trade
 #3,000,000 9개의 거래
+

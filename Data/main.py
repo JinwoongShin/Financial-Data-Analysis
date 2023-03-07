@@ -9,7 +9,7 @@ import pandas as pd
 plt.style.use('seaborn-v0_8')
 
 
-df = set_up.set_stock_df('S&P', '^ixic', '2012-09-20') # format ('name', 'ticker', 2020-01-01)
+df = set_up.set_stock_df('Nasdaq', '^ixic', '2012-09-20') # format ('name', 'ticker', 2020-01-01)
 #df_Y = set_up.set_stock_df('10Y', '^TNX', '2010-01-01')
 
 #day_of_week_analysis.effect_day_of_week_rise(df, 'Friday', 3, 'down') # format (df, 'day of week', 'int', 'up or down')
